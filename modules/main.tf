@@ -3,19 +3,7 @@ resource "google_project" "project" {
   project_id      = var.project_id
   billing_account = var.billing_account
 
-  dynamic "org_id" {
-    for_each = var.org != "" ? [var.org] : []
-    content {
-      org_id = org_id.value
-    }
-  }
-
-  dynamic "folder_id" {
-    for_each = var.folder_id != "" ? [var.folder_id] : []
-    content {
-      folder_id = folder_id.value
-    }
-  }
+  folder_id = var.folder_id
 }
 
 resource "google_project_service" "project_service" {
@@ -42,10 +30,6 @@ output "project_number" {
   value       = google_project.project.number
 }
 
-variable "org" {
-  type        = string
-  description = "Organization ID"
-}
 
 variable "folder_id" {
   type        = string

@@ -6,7 +6,6 @@ module "project" {
   project_id      = "${var.env}-${var.project_name}-${random_string.rand.result}"
   billing_account = var.billing_account
   region          = var.region
-  org             = var.org
   folder_id       = local.folder_id
 
 }
@@ -34,10 +33,6 @@ variable "gcp_credentials" {
   default = ""
 }
 
-variable "org" {
-  type = string
-  default = ""
-}
 
 variable "env" {
   type = string
