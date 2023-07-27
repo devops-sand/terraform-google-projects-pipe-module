@@ -1,4 +1,5 @@
-provider "google" {
+google = {
+  source = "hashicorp/google"
 }
 
 module "project" {
@@ -8,6 +9,7 @@ module "project" {
   project_id      = "${var.env}-${var.project_name}-${random_string.rand.result}"
   billing_account = var.billing_account
   region          = var.region
+  org_id          = var.org
 }
 resource "random_string" "rand" {
   length  = 3
@@ -26,6 +28,10 @@ locals {
   }
 }
 
+
+variable "org" {
+    type = string
+}
 
 variable "env" {
   type = string

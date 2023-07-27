@@ -1,12 +1,9 @@
-provider "google" {
-
-}
-
 resource "google_project" "project" {
   name            = var.project_name
   project_id      = var.project_id
   billing_account = var.billing_account
   region          = var.region
+  org_id          = var.org
 }
 
 resource "google_project_service" "project_service" {
@@ -33,7 +30,10 @@ output "project_number" {
   value       = google_project.project.number
 }
 
-
+variable "org" {
+  type = string
+  description = "Organization ID"
+}
 variable "project_id" {
   description = "The ID of the project"
   type        = string
