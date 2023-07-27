@@ -7,10 +7,7 @@ module "project" {
   billing_account = var.billing_account
   region          = var.region
   org             = var.org
-  folder_dev = var.folder_dev
-  folder_stg = var.folder_stg
-  folder_prd = var.folder_prd
-  workspace = var.workspace
+  folder_id       = local.folder_id
 
 }
 resource "random_string" "rand" {
@@ -24,10 +21,11 @@ resource "random_string" "rand" {
 
 locals {
   folder_ids = {
-    "d" = "${var.folder_dev}"
-    "s" = "${var.folder_stg}"
-    "p" = "${var.folder_prd}"
+    "d" = var.folder_dev
+    "s" = var.folder_stg
+    "p" = var.folder_prd
   }
+  folder_id = local.folder_ids[var.env]
 }
 
 

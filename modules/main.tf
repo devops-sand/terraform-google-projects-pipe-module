@@ -4,6 +4,7 @@ resource "google_project" "project" {
   billing_account = var.billing_account
   region          = var.region
   org_id          = var.org
+  folder_id       = var.folder_id
 }
 
 resource "google_project_service" "project_service" {
@@ -34,6 +35,13 @@ variable "org" {
   type        = string
   description = "Organization ID"
 }
+
+variable "folder_id" {
+  type        = string
+  description = "Organization ID"
+  default     = ""
+}
+
 variable "project_id" {
   description = "The ID of the project"
   type        = string
