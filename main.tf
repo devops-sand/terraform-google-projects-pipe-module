@@ -29,6 +29,10 @@ locals {
 }
 
 
+variable "gcp_credentials" {
+    type = string
+}
+
 variable "org" {
   type = string
 }
