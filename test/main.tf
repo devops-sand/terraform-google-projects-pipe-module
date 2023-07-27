@@ -10,8 +10,12 @@ module "test_project" {
   org             = var.org
   folder_dev      = var.folder_dev
   workspace       = var.workspace
+  gcp_credentials = var.gcp_credentials
 }
 
+variable "gcp_credentials" {
+    type = string
+}
 
 variable "org" {
   type = string
