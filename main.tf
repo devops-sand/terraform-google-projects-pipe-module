@@ -36,6 +36,7 @@ variable "gcp_credentials" {
 
 variable "org" {
   type = string
+  default = ""
 }
 
 variable "env" {
