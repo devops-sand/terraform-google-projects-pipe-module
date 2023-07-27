@@ -7,6 +7,11 @@ module "project" {
   billing_account = var.billing_account
   region          = var.region
   org             = var.org
+  folder_dev = var.folder_dev
+  folder_stg = var.folder_stg
+  folder_prd = var.folder_prd
+  workspace = var.workspace
+
 }
 resource "random_string" "rand" {
   length  = 3
