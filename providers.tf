@@ -1,5 +1,2 @@
-provider {
-  google = {
-    source = "hashicorp/google"
-  }
+provider "google" {
 }
