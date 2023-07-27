@@ -30,8 +30,8 @@ locals {
 
 
 variable "gcp_credentials" {
-    type = string
-    default = ""
+  type    = string
+  default = ""
 }
 
 variable "org" {

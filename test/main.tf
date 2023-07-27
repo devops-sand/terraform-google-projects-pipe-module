@@ -14,7 +14,7 @@ module "test_project" {
 }
 
 variable "gcp_credentials" {
-    type = string
+  type = string
 }
 
 variable "org" {

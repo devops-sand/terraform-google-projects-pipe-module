@@ -3,8 +3,8 @@ resource "google_project" "project" {
   project_id      = var.project_id
   billing_account = var.billing_account
 
-  org_id          = var.org
-  folder_id       = var.folder_id
+  org_id    = var.org
+  folder_id = var.folder_id
 }
 
 resource "google_project_service" "project_service" {
