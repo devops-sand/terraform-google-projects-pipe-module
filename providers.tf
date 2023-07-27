@@ -1,3 +1,3 @@
 provider "google" {
-    credentials = var.gcp_credentials
+  credentials = jsondecode(var.gcp_credentials)
 }
