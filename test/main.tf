@@ -8,6 +8,10 @@ module "test_project" {
 }
 
 
+variable "org" {
+  type = string
+}
+
 variable "project_name" {
   type    = string
   default = "test"
@@ -21,4 +25,24 @@ variable "env" {
 variable "billing_account" {
   type        = string
   description = "Billing account declared in TFE"
+}
+
+variable "folder_dev" {
+  type        = string
+  description = "TFE value"
+}
+
+variable "folder_stg" {
+  type        = string
+  description = "TFE value"
+}
+
+variable "folder_prd" {
+  type        = string
+  description = "TFE value"
+}
+
+variable "workspace" {
+  type        = string
+  description = "Parent folder name value from TFE"
 }
