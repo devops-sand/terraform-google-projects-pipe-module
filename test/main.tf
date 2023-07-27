@@ -4,6 +4,10 @@ module "test_project" {
   env             = var.env
   project_name    = var.project_name
   billing_account = var.billing_account
+  folder_dev = var.folder_dev
+  folder_stg = var.folder_stg
+  folder_prd = var.folder_prd
+  workspace = var.workspace
 
 }
 
