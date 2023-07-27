@@ -3,11 +3,11 @@ provider "google" {
 
 module "project" {
   source = "./modules"
-  
-  project_name = "${var.env}-${var.project_name}"
-  project_id = "${var.env}-${var.project_name}-${random_string.rand.result}"
+
+  project_name    = "${var.env}-${var.project_name}"
+  project_id      = "${var.env}-${var.project_name}-${random_string.rand.result}"
   billing_account = var.billing_account
-  region = var.region 
+  region          = var.region
 }
 resource "random_string" "rand" {
   length  = 3
@@ -42,13 +42,13 @@ variable "project_name" {
   validation {
     condition     = length(var.project_name) > 3 && length(var.project_name) < 12 && can(regex("^[a-z0-9]*$", var.project_name))
     error_message = "Project name should consist only from lowercase letters or numbers and be between 3 and 12 signs."
-  }  
+  }
 }
 
 
 variable "region" {
-    type = string 
-    default = "uscental1"
+  type    = string
+  default = "uscental1"
 }
 
 variable "billing_account" {

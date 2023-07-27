@@ -1,10 +1,10 @@
 module "test_project" {
   source = "../"
 
-  env        = var.env
-  project_name = var.project_name
+  env             = var.env
+  project_name    = var.project_name
   billing_account = var.billing_account
-  
+
 
 }
 
