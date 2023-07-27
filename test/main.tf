@@ -7,7 +7,6 @@ module "test_project" {
   // add these lines
   folder_stg      = var.folder_stg
   folder_prd      = var.folder_prd
-  org             = var.org
   folder_dev      = var.folder_dev
   workspace       = var.workspace
   gcp_credentials = var.gcp_credentials
