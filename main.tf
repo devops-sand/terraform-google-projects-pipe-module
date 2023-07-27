@@ -27,7 +27,7 @@ locals {
 
 
 variable "org" {
-    type = string
+  type = string
 }
 
 variable "env" {

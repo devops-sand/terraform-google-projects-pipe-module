@@ -31,7 +31,7 @@ output "project_number" {
 }
 
 variable "org" {
-  type = string
+  type        = string
   description = "Organization ID"
 }
 variable "project_id" {
