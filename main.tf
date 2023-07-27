@@ -1,6 +1,3 @@
-google = {
-  source = "hashicorp/google"
-}
 
 module "project" {
   source = "./modules"
