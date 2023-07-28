@@ -82,3 +82,7 @@ variable "workspace" {
   type        = string
   description = "Parent folder name value from TFE"
 }
+
+terraform {
+  required_version = ">= 1.5.0"
+}
