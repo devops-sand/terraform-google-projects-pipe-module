@@ -1,0 +1,40 @@
+name: 'Terraform GitHub Actions'
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+
+env:
+  TF_VERSION: 'latest'
+  TF_WORKING_DIR: 'test'
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v2
+
+      - name: 'Setup Terraform'
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: 'Terraform Init'
+        run: terraform init
+        working-directory: ${{ env.TF_WORKING_DIR }}
+
+      - name: 'Terraform Validate'
+        run: terraform validate -no-color
+        working-directory: ${{ env.TF_WORKING_DIR }}
+
+      - name: 'Terraform Plan'
+        run: terraform plan -no-color
+        working-directory: ${{ env.TF_WORKING_DIR }}
+
+      - name: 'Terraform Apply'
+        run: terraform apply -auto-approve -no-color
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
