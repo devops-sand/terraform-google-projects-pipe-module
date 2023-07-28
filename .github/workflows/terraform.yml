@@ -9,7 +9,7 @@ on:
 env:
   TF_CLOUD_ORGANIZATION: "aether-default"
   TFE_TOKEN: "${{ secrets.TF_API_TOKEN }}"
-  TF_WORKSPACE: "tarot-dev"
+  TF_WORKSPACE: "tf-projects"
   CONFIG_DIRECTORY: "./"
 
 permissions:
