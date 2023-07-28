@@ -8,6 +8,7 @@ on:
 env:
   TF_VERSION: 'latest'
   TF_WORKING_DIR: 'test'
+  TFE_TOKEN: ${{ secrets.TF_API_TOKEN }}
 
 jobs:
   terraform_init:
@@ -41,7 +42,7 @@ jobs:
       - name: 'Terraform Init'
         run: terraform init
         working-directory: ${{ env.TF_WORKING_DIR }}
-        
+
       - name: 'Terraform Plan'
         run: terraform plan -no-color
         working-directory: ${{ env.TF_WORKING_DIR }}
