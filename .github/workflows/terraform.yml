@@ -10,7 +10,7 @@ env:
   TF_WORKING_DIR: 'test'
 
 jobs:
-  terraform:
+  terraform_init:
     name: 'Terraform Init'
     runs-on: ubuntu-latest
     steps:
@@ -25,9 +25,8 @@ jobs:
       - name: 'Terraform Init'
         run: terraform init
         working-directory: ${{ env.TF_WORKING_DIR }}
-
-jobs:
-  terraform:
+      
+  terraform_plan:
     name: 'Terraform Plan'
     runs-on: ubuntu-latest
     steps:
