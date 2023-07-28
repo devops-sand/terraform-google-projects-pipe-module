@@ -8,7 +8,7 @@ on:
 
 env:
   TF_CLOUD_ORGANIZATION: "aether-default"
-  TFE_TOKEN: "${{ secrets.TFE_TOKEN }}"
+  TFE_TOKEN: "${{ secrets.TF_API_TOKEN }}"
   TF_WORKSPACE: "tarot-dev"
   CONFIG_DIRECTORY: "./"
 
