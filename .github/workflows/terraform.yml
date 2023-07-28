@@ -8,7 +8,7 @@ on:
 env:
   TF_VERSION: 'latest'
   TF_WORKING_DIR: 'test'
-  TFE_TOKEN: ${{ secrets.TF_API_TOKEN }}
+  TFE_TOKEN: ${{ secrets.TFE_TOKEN }}
 
 jobs:
   terraform_init:
