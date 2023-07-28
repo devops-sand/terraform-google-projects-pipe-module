@@ -53,3 +53,12 @@ variable "workspace" {
   description = "Parent folder name value from TFE"
 }
 
+
+terraform {
+  backend "remote" {
+    organization = "aethersen"
+    workspaces {
+      name = "test-workflow-then-delete"
+    }
+  }
+}
