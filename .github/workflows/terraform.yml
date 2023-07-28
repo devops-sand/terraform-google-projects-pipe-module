@@ -7,9 +7,9 @@ on:
   pull_request:
 
 env:
-  TF_CLOUD_ORGANIZATION: "aethersen"
+  TF_CLOUD_ORGANIZATION: "aether-default"
   TFE_TOKEN: "${{ secrets.TF_API_TOKEN }}"
-  TF_WORKSPACE: "test-workflow-then-delete"
+  TF_WORKSPACE: "tarot-dev"
   CONFIG_DIRECTORY: "./"
 
 permissions:
@@ -25,6 +25,8 @@ jobs:
     name: "Terraform Plan"
     runs-on: ubuntu-latest
     environment: production
+    secrets:
+      TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}    
 
     steps:
       - name: Checkout
