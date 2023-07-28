@@ -1,6 +1,10 @@
 name: "Terraform Plan"
 
 on:
+  workflow_call:
+    secrets:
+      TF_API_TOKEN:
+        required: true
   push:
     branches:
     - master
