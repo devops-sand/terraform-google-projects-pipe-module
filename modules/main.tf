@@ -33,7 +33,7 @@ output "project_number" {
 
 variable "folder_id" {
   type        = string
-  description = "Organization ID"
+  description = "Folder ID"
   default     = ""
 }
 
