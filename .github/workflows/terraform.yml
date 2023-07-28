@@ -1,10 +1,6 @@
 name: "Terraform Plan"
 
 on:
-  workflow_call:
-    secrets:
-      TF_API_TOKEN:
-        required: true
   push:
     branches:
     - master
@@ -31,6 +27,7 @@ jobs:
     environment: production
     secrets:
       TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}    
+      TF_VAR_organization: ${{ secrets.TF_VAR_organization }} 
 
     steps:
       - name: Checkout
@@ -42,8 +39,6 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Terraform Init
-        env:
-          TF_VAR_organization: ${{ secrets.TF_ORGANIZATION }}
         run: terraform init
 
       - name: Terraform Format
@@ -106,4 +101,3 @@ jobs:
               repo: context.repo.repo,
               body: output
             });
-
