@@ -52,3 +52,13 @@ variable "workspace" {
   type        = string
   description = "Parent folder name value from TFE"
 }
+
+
+terraform {
+  backend "remote" {
+    organization = "aether-default"
+    workspaces {
+      name = "tarot-dev"
+    }
+  }
+}
