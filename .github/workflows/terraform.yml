@@ -7,9 +7,9 @@ on:
   pull_request:
 
 env:
-  TF_CLOUD_ORGANIZATION: "aether-default"
+  TF_CLOUD_ORGANIZATION: "aethersen"
   TFE_TOKEN: "${{ secrets.TF_API_TOKEN }}"
-  TF_WORKSPACE: "tarot-dev"
+  TF_WORKSPACE: "test-workflow-then-delete"
   CONFIG_DIRECTORY: "./"
 
 permissions:
