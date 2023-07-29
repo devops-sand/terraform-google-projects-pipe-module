@@ -53,25 +53,23 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Upload Configuration
-        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
+        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.2
         id: plan-upload
         with:
           token: ${{ secrets.TF_API_TOKEN }}
           workspace: ${{ env.TF_WORKSPACE }}
           directory: ${{ env.CONFIG_DIRECTORY }}
-          speculative: true
 
       - name: Create Plan Run
-        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
+        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.2
         id: plan-run
         with:
           token: ${{ secrets.TF_API_TOKEN }}
           workspace: ${{ env.TF_WORKSPACE }}
           configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
-          plan_only: true
 
       - name: Get Plan Output
-        uses: hashicorp/tfc-workflows-github/actions/plan-output@v1.0.0
+        uses: hashicorp/tfc-workflows-github/actions/plan-output@v1.0.2
         id: plan-output
         with:
           token: ${{ secrets.TF_API_TOKEN }}
@@ -91,7 +89,7 @@ jobs:
 
     steps:
       - name: Discard Run
-        uses: hashicorp/tfc-workflows-github/actions/discard-run@v1.0.0
+        uses: hashicorp/tfc-workflows-github/actions/discard-run@v1.0.2
         with:
           token: ${{ secrets.TF_API_TOKEN }}
           workspace: ${{ env.TF_WORKSPACE }}
@@ -102,7 +100,7 @@ jobs:
     needs: terraform-plan
     runs-on: ubuntu-latest
     environment: production
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.terraform-plan.result == 'success'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.terraform-plan.result == 'success' && github.event.pull_request.head.repo.full_name == ''
 
     steps:
       - name: Apply Run
