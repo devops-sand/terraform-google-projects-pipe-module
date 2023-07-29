@@ -81,6 +81,7 @@ jobs:
           workspace: ${{ env.TF_WORKSPACE }}
           configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
           plan: ${{ fromJSON(steps.plan-run.outputs.payload).data.relationships.plan.data.id }}
+  
     outputs:
       payload: ${{ steps.plan-run.outputs.payload }}
 
@@ -98,3 +99,18 @@ jobs:
           token: ${{ secrets.TF_API_TOKEN }}
           workspace: ${{ env.TF_WORKSPACE }}
           run: ${{ fromJSON(needs.terraform-plan.outputs.payload).data.id }}
+
+  terraform-apply:
+    name: "Terraform Apply"
+    needs: terraform-plan
+    runs-on: ubuntu-latest
+    environment: production
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.terraform-plan.result == 'success'
+
+    steps:
+      - name: Apply Run
+        uses: hashicorp/tfc-workflows-github/actions/apply@v1.0.0
+        with:
+          token: ${{ secrets.TF_API_TOKEN }}
+          workspace: ${{ env.TF_WORKSPACE }}
+          run: ${{ fromJSON(needs.terraform-plan.outputs.payload).data.id }} # Get the run ID from the payload of the terraform-plan job and apply the run
