@@ -5,6 +5,6 @@ locals {
     "p" = var.folder_prd
   }
   folder_id      = local.folder_ids[var.env]
-  api_defaults   = concat([var.enable_apis, local.mandatory_apis])
+  api_defaults   = concat(var.enable_apis, local.mandatory_apis)
   mandatory_apis = ["monitoring.googleapis.com"]
 }
