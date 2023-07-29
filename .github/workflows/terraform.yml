@@ -81,8 +81,8 @@ jobs:
           workspace: ${{ env.TF_WORKSPACE }}
           configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
           plan: ${{ fromJSON(steps.plan-run.outputs.payload).data.relationships.plan.data.id }}
-      outputs:
-        payload: ${{ steps.plan-run.outputs.payload }}
+    outputs:
+      payload: ${{ steps.plan-run.outputs.payload }}
 
   terraform-discard:
     name: "Terraform Discard"
