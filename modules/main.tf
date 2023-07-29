@@ -3,7 +3,6 @@ resource "google_project" "project" {
   project_id      = var.project_id
   billing_account = var.billing_account
   folder_id       = var.folder_id
-  enable_apis     = var.enable_apis
 }
 
 resource "google_project_service" "project_service" {
