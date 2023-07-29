@@ -85,7 +85,7 @@ jobs:
     needs: terraform-plan
     runs-on: ubuntu-latest
     environment: production
-    if: ${{ needs.terraform-plan.result == 'failure' }}
+    if: always()
 
     steps:
       - name: Discard Run
