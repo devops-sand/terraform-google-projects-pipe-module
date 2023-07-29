@@ -1,7 +1,6 @@
 variable "folder_id" {
   type        = string
   description = "Folder ID"
-  default     = ""
 }
 
 variable "project_id" {
