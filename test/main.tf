@@ -11,6 +11,20 @@ variable "gcp_credentials" {
   type = string
 }
 
+variable "folder_dev" {
+  type        = string
+  description = "TFE value"
+}
+
+variable "folder_stg" {
+  type        = string
+  description = "TFE value"
+}
+
+variable "folder_prd" {
+  type        = string
+  description = "TFE value"
+}
 
 variable "project_name" {
   type    = string
