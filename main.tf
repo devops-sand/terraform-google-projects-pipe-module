@@ -2,8 +2,8 @@
 module "project" {
   source = "./modules"
 
-  project_name    = "${var.env}-${var.project_name}"
-  project_id      = "${var.env}-${var.project_name}-${random_string.rand.result}"
+  project_name    = "aether-${var.env}-${var.project_name}"
+  project_id      = "aether-${var.env}-${var.project_name}-${random_string.rand.result}"
   billing_account = var.billing_account
   region          = var.region
   folder_id       = local.folder_id
@@ -30,7 +30,6 @@ locals {
 
 variable "gcp_credentials" {
   type    = string
-  default = ""
 }
 
 
