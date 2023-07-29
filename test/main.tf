@@ -20,7 +20,7 @@ variable "gcp_credentials" {
 
 variable "project_name" {
   type    = string
-  default = "test"
+  default = "module-test"
 }
 
 variable "env" {
