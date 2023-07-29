@@ -1,10 +1,5 @@
 locals {
-  folder_ids = {
-    "d" = var.folder_dev
-    "s" = var.folder_stg
-    "p" = var.folder_prd
-  }
-  folder_id      = local.folder_ids[var.env]
+  folder_id = var.env == "d" ? var.folder_dev : var.env == "s" ? var.folder_stg : var.folder_prd 
   api_defaults   = concat(var.enable_apis, local.mandatory_apis)
   mandatory_apis = ["monitoring.googleapis.com", "cloudbilling.googleapis.com", "cloudresourcemanager.googleapis.com"]
 }
