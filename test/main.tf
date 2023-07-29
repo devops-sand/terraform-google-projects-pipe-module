@@ -5,6 +5,7 @@ module "test_project" {
   project_name    = var.project_name
   billing_account = var.billing_account
   gcp_credentials = var.gcp_credentials
+  folder_id       = var.folder_id
 }
 
 variable "gcp_credentials" {
