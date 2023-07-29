@@ -44,3 +44,10 @@ variable "billing_account" {
   description = "Billing account declared in TFE"
 }
 
+resource "random_string" "dummy" {
+  length  = 3
+  upper   = false
+  lower   = true
+  numeric = true
+  special = false
+}
