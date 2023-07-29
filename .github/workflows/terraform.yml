@@ -9,7 +9,7 @@ on:
 env:
   TF_CLOUD_ORGANIZATION: ${{ secrets.TF_ORGANIZATION }} # Get the Terraform Cloud organization from Github secrets
   TF_WORKSPACE: ${{ secrets.TF_WORKSPACE }} # Get the Terraform workspace from Github secrets
-  CONFIG_DIRECTORY: "./test"
+  CONFIG_DIRECTORY: "test"
 
 permissions:
   contents: read
