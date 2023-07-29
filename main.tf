@@ -46,8 +46,8 @@ variable "env" {
 variable "project_name" {
   type = string
   validation {
-    condition     = length(var.project_name) > 3 && length(var.project_name) < 12 && can(regex("^[a-z0-9]*$", var.project_name))
-    error_message = "Project name should consist only from lowercase letters or numbers and be between 3 and 12 signs."
+    condition     = length(var.project_name) > 3 && length(var.project_name) < 12 && can(regex("^[a-z0-9][-a-z0-9]*[a-z0-9]$", var.project_name))
+    error_message = "Project name should consist only of lowercase letters, numbers, or dashes and be between 3 and 12 characters. Dashes cannot be at the beginning or end of the project name."
   }
 }
 
