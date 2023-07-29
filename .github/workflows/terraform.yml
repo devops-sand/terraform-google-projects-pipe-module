@@ -3,13 +3,13 @@ name: "Terraform CI"
 on:
   push:
     branches:
-    - master # This workflow will trigger on push to master
-  pull_request: # This workflow will also trigger on pull requests
+    - master
+  pull_request:
 
 env:
-  TF_CLOUD_ORGANIZATION: "aether-default" # Environment variable for Terraform Cloud organization
-  TF_WORKSPACE: "tarot-dev" # Environment variable for Terraform workspace
-  CONFIG_DIRECTORY: "./" # Environment variable for directory containing Terraform configuration
+  TF_CLOUD_ORGANIZATION: "aether-default"
+  TF_WORKSPACE: "tarot-dev"
+  CONFIG_DIRECTORY: "./"
 
 permissions:
   contents: read
@@ -32,14 +32,14 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }} # Secret token for Terraform Cloud
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Terraform Init
-        run: terraform init # Initialize Terraform
+        run: terraform init
 
   terraform-plan:
     name: "Terraform Plan"
-    needs: terraform-init # This job depends on terraform-init job
+    needs: terraform-init
     runs-on: ubuntu-latest
     environment: production
 
@@ -53,7 +53,7 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Terraform Format
-        run: terraform fmt -check # Check Terraform formatting
+        run: terraform fmt -check
 
       - name: Upload Configuration
         uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
@@ -62,7 +62,7 @@ jobs:
           token: ${{ secrets.TF_API_TOKEN }}
           workspace: ${{ env.TF_WORKSPACE }}
           directory: ${{ env.CONFIG_DIRECTORY }}
-          speculative: true # Perform a speculative plan
+          speculative: true
 
       - name: Create Plan Run
         uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
@@ -70,8 +70,8 @@ jobs:
         with:
           token: ${{ secrets.TF_API_TOKEN }}
           workspace: ${{ env.TF_WORKSPACE }}
-          configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }} # Use the configuration version from the previous step
-          plan_only: true # Only perform a plan, not an apply
+          configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
+          plan_only: true
 
       - name: Get Plan Output
         uses: hashicorp/tfc-workflows-github/actions/plan-output@v1.0.0
@@ -80,16 +80,16 @@ jobs:
           token: ${{ secrets.TF_API_TOKEN }}
           workspace: ${{ env.TF_WORKSPACE }}
           configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
-          plan: ${{ fromJSON(steps.plan-run.outputs.payload).data.relationships.plan.data.id }} # Get the plan ID from the payload of the previous step
+          plan: ${{ fromJSON(steps.plan-run.outputs.payload).data.relationships.plan.data.id }}
       outputs:
-        payload: ${{ steps.plan-run.outputs.payload }} # Make the payload output available to the 'Terraform Discard' job
+        payload: ${{ steps.plan-run.outputs.payload }}
 
   terraform-discard:
     name: "Terraform Discard"
-    needs: terraform-plan # This job depends on terraform-plan job
+    needs: terraform-plan
     runs-on: ubuntu-latest
     environment: production
-    if: ${{ needs.terraform-plan.result == 'failure' }} # Run this job only if 'Terraform Plan' job fails
+    if: ${{ needs.terraform-plan.result == 'failure' }}
 
     steps:
       - name: Discard Run
@@ -97,4 +97,4 @@ jobs:
         with:
           token: ${{ secrets.TF_API_TOKEN }}
           workspace: ${{ env.TF_WORKSPACE }}
-          run: ${{ fromJSON(needs.terraform-plan.outputs.payload).data.id }} # Get the run ID from the payload of the terraform-plan job and discard the run
+          run: ${{ fromJSON(needs.terraform-plan.outputs.payload).data.id }}
