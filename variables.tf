@@ -34,19 +34,16 @@ variable "billing_account" {
 variable "folder_dev" {
   type        = string
   description = "TFE value"
-  default     = ""
 }
 
 variable "folder_stg" {
   type        = string
   description = "TFE value"
-  default     = ""
 }
 
 variable "folder_prd" {
   type        = string
   description = "TFE value"
-  default     = ""
 }
 
 variable "enable_apis" {
