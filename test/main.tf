@@ -12,6 +12,9 @@ variable "gcp_credentials" {
   type = string
 }
 
+variable "folder_id" {
+  type = string
+}
 
 
 variable "project_name" {
