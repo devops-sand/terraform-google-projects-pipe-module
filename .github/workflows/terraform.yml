@@ -53,28 +53,23 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Upload Configuration
-        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
+        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.2
         id: plan-upload
         with:
-          token: ${{ secrets.TF_API_TOKEN }}
           workspace: ${{ env.TF_WORKSPACE }}
           directory: ${{ env.CONFIG_DIRECTORY }}
-          speculative: true
 
       - name: Create Plan Run
-        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
+        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.2
         id: plan-run
         with:
-          token: ${{ secrets.TF_API_TOKEN }}
           workspace: ${{ env.TF_WORKSPACE }}
           configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
-          plan_only: true
 
       - name: Get Plan Output
-        uses: hashicorp/tfc-workflows-github/actions/plan-output@v1.0.0
+        uses: hashicorp/tfc-workflows-github/actions/plan-output@v1.0.2
         id: plan-output
         with:
-          token: ${{ secrets.TF_API_TOKEN }}
           workspace: ${{ env.TF_WORKSPACE }}
           configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
           plan: ${{ fromJSON(steps.plan-run.outputs.payload).data.relationships.plan.data.id }}
@@ -91,9 +86,8 @@ jobs:
 
     steps:
       - name: Discard Run
-        uses: hashicorp/tfc-workflows-github/actions/discard-run@v1.0.0
+        uses: hashicorp/tfc-workflows-github/actions/discard-run@v1.0.2
         with:
-          token: ${{ secrets.TF_API_TOKEN }}
           workspace: ${{ env.TF_WORKSPACE }}
           run: ${{ fromJSON(needs.terraform-plan.outputs.payload).data.id }}
 
@@ -108,6 +102,5 @@ jobs:
       - name: Apply Run
         uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.2
         with:
-          token: ${{ secrets.TF_API_TOKEN }}
           workspace: ${{ env.TF_WORKSPACE }}
           run: ${{ fromJSON(needs.terraform-plan.outputs.payload).data.id }} # Get the run ID from the payload of the terraform-plan job and apply the run
