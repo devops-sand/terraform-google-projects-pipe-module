@@ -20,8 +20,9 @@ defaults:
     shell: bash
 
 jobs:
-  terraform-init:
-    name: "Terraform Init"
+  terraform-init-plan:  # Job for PR events
+    if: github.event_name == 'pull_request'
+    name: "Terraform Init & Plan"
     runs-on: ubuntu-latest
     environment: production
 
@@ -36,21 +37,6 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
-
-  terraform-plan:
-    name: "Terraform Plan"
-    needs: terraform-init
-    runs-on: ubuntu-latest
-    environment: production
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Upload Configuration
         uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.2
@@ -76,36 +62,37 @@ jobs:
           workspace: ${{ env.TF_WORKSPACE }}
           configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
           plan: ${{ fromJSON(steps.plan-run.outputs.payload).data.relationships.plan.data.id }}
-  
-    outputs:
-      payload: ${{ steps.plan-run.outputs.payload }}
-
-  terraform-discard:
-    name: "Terraform Discard"
-    needs: terraform-plan
-    runs-on: ubuntu-latest
-    environment: production
-    if: always()
-
-    steps:
+      
       - name: Discard Run
+        if: failure()
         uses: hashicorp/tfc-workflows-github/actions/discard-run@v1.0.2
         with:
           token: ${{ secrets.TF_API_TOKEN }}
           workspace: ${{ env.TF_WORKSPACE }}
-          run: ${{ fromJSON(needs.terraform-plan.outputs.payload).data.id }}
+          run: ${{ fromJSON(steps.plan-run.outputs.payload).data.id }}
+  
+    outputs:
+      payload: ${{ steps.plan-run.outputs.payload }}
 
-  terraform-apply:
+  terraform-apply:  # Job for push events
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs: terraform-init-plan
     name: "Terraform Apply"
-    needs: terraform-plan
     runs-on: ubuntu-latest
     environment: production
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.terraform-plan.result == 'success' && github.event.pull_request.head.repo.full_name == ''
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
       - name: Apply Run
         uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.2
         with:
           token: ${{ secrets.TF_API_TOKEN }}
           workspace: ${{ env.TF_WORKSPACE }}
-          run: ${{ fromJSON(needs.terraform-plan.outputs.payload).data.id }} # Get the run ID from the payload of the terraform-plan job and apply the run
+          run: ${{ fromJSON(needs.terraform-init-plan.outputs.payload).data.id }} # Get the run ID from the payload of the terraform-plan job and apply the run
