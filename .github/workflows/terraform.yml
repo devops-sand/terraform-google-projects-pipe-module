@@ -64,7 +64,7 @@ jobs:
           plan: ${{ fromJSON(steps.plan-run.outputs.payload).data.relationships.plan.data.id }}
       
       - name: Discard Run
-        if: failure()
+        if: always()
         uses: hashicorp/tfc-workflows-github/actions/discard-run@v1.0.2
         with:
           token: ${{ secrets.TF_API_TOKEN }}
