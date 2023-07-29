@@ -100,7 +100,7 @@ jobs:
     needs: terraform-plan
     runs-on: ubuntu-latest
     environment: production
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.terraform-plan.result == 'success'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.terraform-plan.result == 'success' && github.event.pull_request.head.repo.full_name == ''
 
     steps:
       - name: Apply Run
