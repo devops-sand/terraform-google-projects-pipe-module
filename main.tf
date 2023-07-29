@@ -29,7 +29,7 @@ locals {
 
 
 variable "gcp_credentials" {
-  type    = string
+  type = string
 }
 
 
