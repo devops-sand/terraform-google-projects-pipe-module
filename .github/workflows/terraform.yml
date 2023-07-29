@@ -1,4 +1,4 @@
-name: "Terraform Plan"
+name: "Terraform CI"
 
 on:
   push:
@@ -20,8 +20,8 @@ defaults:
     shell: bash
 
 jobs:
-  terraform:
-    name: "Terraform Plan"
+  terraform-init:
+    name: "Terraform Init"
     runs-on: ubuntu-latest
     environment: production
 
@@ -36,6 +36,21 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
+
+  terraform-plan:
+    name: "Terraform Plan"
+    needs: terraform-init
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Terraform Format
         run: terraform fmt -check
@@ -67,6 +82,28 @@ jobs:
           configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
           plan: ${{ fromJSON(steps.plan-run.outputs.payload).data.relationships.plan.data.id }}
 
+  terraform-discard:
+    name: "Terraform Discard"
+    needs: terraform-plan
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Discard Run
+        if: ${{ failure() }}
+        uses: hashicorp/tfc-workflows-github/actions/discard-run@v1.0.0
+        with:
+          token: ${{ secrets.TF_API_TOKEN }}
+          workspace: ${{ env.TF_WORKSPACE }}
+          run: ${{ fromJSON(steps.plan-run.outputs.payload).data.id }}
+
+  update-pr:
+    name: "Update PR"
+    needs: terraform-plan
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
       - name: Update PR
         uses: actions/github-script@v6
         id: plan-comment
