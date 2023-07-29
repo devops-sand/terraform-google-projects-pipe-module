@@ -7,7 +7,7 @@ module "project" {
   billing_account = var.billing_account
   region          = var.region
   folder_id       = local.folder_id
-  enable_apis     = var.api_defaults
+  enable_apis     = local.api_defaults
 
 }
 
