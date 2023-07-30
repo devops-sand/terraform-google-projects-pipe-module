@@ -1,51 +1,47 @@
-name: Create Tag for Version Change
+name: Create Tag From VERSION file
 
-on: 
+on:
   push:
-    paths:
-      - 'VERSION'
+    branches:
+      - master
 
 jobs:
-  build:
-    name: Create Tag
+  create-tag:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    permissions:
+      contents: write
 
-      - name: Get the version
-        id: get_version
-        run: echo ::set-output name=VERSION::$(cat VERSION)
-        
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Read VERSION file
+        id: version
+        run: echo "::set-output name=version::$(cat VERSION)"
+
       - name: Create Tag
-        id: create_tag
-        uses: actions/github-script@v5
+        uses: actions/github-script@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const version = "${{ steps.get_version.outputs.VERSION }}"
+            const version = "${{ steps.version.outputs.version }}"
             const ref = `refs/tags/v${version}`
             const repository = context.repo.owner + "/" + context.repo.repo
             const sha = context.sha
-
-            const tagExists = await github.git.getRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: `tags/v${version}`
-            }).then( 
-              () => true, 
-              () => false
-            )
-
-            if (!tagExists) {
+            
+            try {
+              await github.git.getRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `tags/v${version}`
+              })
+              console.log(`Tag already exists: ${ref}`)
+            } catch (error) {
               await github.git.createRef({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 ref: ref,
                 sha: sha,
               })
-
-              console.log("Tag created: " + ref)
-            } else {
-              console.log("Tag already exists: " + ref)
+              console.log(`Tag created: ${ref}`)
             }
