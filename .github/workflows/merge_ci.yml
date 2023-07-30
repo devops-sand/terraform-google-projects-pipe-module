@@ -105,7 +105,7 @@ jobs:
 
     steps:
       - name: Apply Run
-      - uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.2
+        uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.2
         id: apply
         with:
           token: ${{ secrets.TF_API_TOKEN }}
