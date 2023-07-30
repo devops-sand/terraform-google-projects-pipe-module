@@ -1,0 +1,97 @@
+name: "Terraform Deploy"
+
+on:
+  push:
+    branches:
+    - master
+
+env:
+  TF_CLOUD_ORGANIZATION: ${{ secrets.TF_ORGANIZATION }}
+  TF_WORKSPACE: ${{ secrets.TF_WORKSPACE }}
+  CONFIG_DIRECTORY: "./"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  terraform-init:
+    name: "Terraform Init"
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3 
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1 
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+      - name: Terraform Init
+        run: terraform init
+
+  terraform-plan:
+    name: "Terraform Plan"
+    needs: terraform-init
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+      - name: Upload Configuration
+        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
+        id: plan-upload
+        with:
+          token: ${{ secrets.TF_API_TOKEN }}
+          workspace: ${{ env.TF_WORKSPACE }}
+          directory: ${{ env.CONFIG_DIRECTORY }}
+          speculative: true
+
+      - name: Create Plan Run
+        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
+        id: plan-run
+        with:
+          token: ${{ secrets.TF_API_TOKEN }}
+          workspace: ${{ env.TF_WORKSPACE }}
+          configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
+          plan_only: false
+
+      - name: Get Plan Output
+        uses: hashicorp/tfc-workflows-github/actions/plan-output@v1.0.0
+        id: plan-output
+        with:
+          token: ${{ secrets.TF_API_TOKEN }}
+          workspace: ${{ env.TF_WORKSPACE }}
+          configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }}
+          plan: ${{ fromJSON(steps.plan-run.outputs.payload).data.relationships.plan.data.id }}
+
+    outputs:
+      payload: ${{ steps.plan-run.outputs.payload }}
+
+  terraform-discard:
+    name: "Terraform Discard"
+    needs: terraform-plan
+    runs-on: ubuntu-latest
+    environment: production
+    if: ${{ needs.terraform-plan.result == 'failure' }}
+
+    steps:
+      - name: Discard Run
+        uses: hashicorp/tfc-workflows-github/actions/discard-run@v1.0.0
+        with:
+          token: ${{ secrets.TF_API_TOKEN }}
+          workspace: ${{ env.TF_WORKSPACE }}
+          run: ${{ fromJSON(needs.terraform-plan.outputs.payload).data.id }}
