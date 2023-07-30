@@ -59,6 +59,7 @@ jobs:
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }} # Fetch the Terraform API token from secrets
 
+
       - name: Upload Configuration # Upload Terraform configuration
         uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
         id: plan-upload
@@ -96,7 +97,7 @@ jobs:
     needs: terraform-plan # This job depends on the terraform-plan job
     runs-on: ubuntu-latest # The type of machine to run the job on
     environment: production # The environment in which to run the job
-    if: always() # ${{ needs.terraform-plan.result == 'failure' }} # This job runs only if the terraform-plan job fails
+    if: ${{ needs.terraform-plan.result == 'failure' }} # This job runs only if the terraform-plan job fails
 
     # Define the steps of the job
     steps:
