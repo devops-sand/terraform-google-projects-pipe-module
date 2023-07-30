@@ -10,18 +10,3 @@ module "project" {
   enable_apis     = local.api_defaults
 
 }
-
-resource "random_string" "rand" {
-  length  = 3
-  upper   = false
-  lower   = true
-  numeric = true
-  special = false
-}
-resource "random_string" "dummy" {
-  length  = 3
-  upper   = false
-  lower   = true
-  numeric = true
-  special = false
-}
