@@ -37,7 +37,7 @@ jobs:
         run: terraform init
 
   terraform-plan:
-    name: "Terraform Plan"
+    name: "Terraform Plan and Apply"
     needs: terraform-init
     runs-on: ubuntu-latest
     environment: production
@@ -94,3 +94,22 @@ jobs:
           token: ${{ secrets.TF_API_TOKEN }}
           workspace: ${{ env.TF_WORKSPACE }}
           run: ${{ fromJSON(needs.terraform-plan.outputs.payload).data.id }}
+
+
+  terraform-apply:
+    name: "Terraform Apply"
+    needs: terraform-plan 
+    runs-on: ubuntu-latest
+    environment: production
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && needs.terraform-plan.result == 'success' 
+
+    steps:
+      - name: Apply Run
+      - uses: hashicorp/tfc-workflows-github/actions/apply-run@v1.0.2
+        id: apply
+        with:
+          token: ${{ secrets.TF_API_TOKEN }}
+          workspace: ${{ env.TF_WORKSPACE }}
+          run: ${{ fromJSON(needs.terraform-plan.outputs.payload).data.id }}
+
+
