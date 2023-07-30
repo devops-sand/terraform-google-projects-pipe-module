@@ -1,0 +1,111 @@
+# Set the name of the workflow
+name: "Terraform CI"
+
+# This workflow gets triggered on push to master branch and on every pull request
+on:
+  pull_request:
+
+# Define environment variables
+env:
+  TF_CLOUD_ORGANIZATION: ${{ secrets.TF_ORGANIZATION }} # Terraform Cloud organization, fetched from secrets
+  TF_WORKSPACE: ${{ secrets.TF_WORKSPACE }} # Terraform workspace, fetched from secrets
+  CONFIG_DIRECTORY: "./" # The configuration directory 
+
+# Define the permissions for the workflow
+permissions:
+  contents: read # The workflow can read repository contents
+  pull-requests: write # The workflow can write pull requests
+
+# Set the default shell for all run commands in the workflow
+defaults:
+  run:
+    shell: bash
+
+# Define the jobs in the workflow
+jobs:
+  # The first job is to initialize Terraform
+  terraform-init:
+    name: "Terraform Init" # Name of the job
+    runs-on: ubuntu-latest # The type of machine to run the job on
+    environment: production # The environment in which to run the job
+
+    # Define the steps of the job
+    steps:
+      - name: Checkout # Checkout the repository
+        uses: actions/checkout@v3 
+
+      - name: Setup Terraform # Setup Terraform
+        uses: hashicorp/setup-terraform@v1 
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }} # Fetch the Terraform API token from secrets
+
+      - name: Terraform Init # Run Terraform initialization
+        run: terraform init
+
+  # The second job is to plan the Terraform deployment
+  terraform-plan:
+    name: "Terraform Plan" # Name of the job
+    needs: terraform-init # This job depends on the terraform-init job
+    runs-on: ubuntu-latest # The type of machine to run the job on
+    environment: production # The environment in which to run the job
+
+    # Define the steps of the job
+    steps:
+      - name: Checkout # Checkout the repository
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform # Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }} # Fetch the Terraform API token from secrets
+
+
+      - name: Upload Configuration # Upload Terraform configuration
+        uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.0.0
+        id: plan-upload
+        with:
+          token: ${{ secrets.TF_API_TOKEN }} # Fetch the Terraform API token from secrets
+          workspace: ${{ env.TF_WORKSPACE }} # Use the Terraform workspace defined as an environment variable
+          directory: ${{ env.CONFIG_DIRECTORY }} # Use the configuration directory defined as an environment variable
+          speculative: true # Perform a speculative plan, which doesn't affect real resources
+
+      - name: Create Plan Run # Create a Terraform plan run
+        uses: hashicorp/tfc-workflows-github/actions/create-run@v1.0.0
+        id: plan-run
+        with:
+          token: ${{ secrets.TF_API_TOKEN }} # Fetch the Terraform API token from secrets
+          workspace: ${{ env.TF_WORKSPACE }} # Use the Terraform workspace defined as an environment variable
+          configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }} # Use the output of the previous step
+          plan_only: true # Only create a plan, don't apply it
+
+      - name: Get Plan Output # Get the output of the Terraform plan
+        uses: hashicorp/tfc-workflows-github/actions/plan-output@v1.0.0
+        id: plan-output
+        with:
+          token: ${{ secrets.TF_API_TOKEN }} # Fetch the Terraform API token from secrets
+          workspace: ${{ env.TF_WORKSPACE }} # Use the Terraform workspace defined as an environment variable
+          configuration_version: ${{ steps.plan-upload.outputs.configuration_version_id }} # Use the output of the previous step
+          plan: ${{ fromJSON(steps.plan-run.outputs.payload).data.relationships.plan.data.id }} # Fetch the ID of the plan from the output of the previous step
+  
+    # Define the outputs of the job
+    outputs:
+      payload: ${{ steps.plan-run.outputs.payload }} # Output the payload of the plan run
+
+  # The third job is to discard the Terraform plan if it fails
+  terraform-discard:
+    name: "Terraform Discard" # Name of the job
+    needs: terraform-plan # This job depends on the terraform-plan job
+    runs-on: ubuntu-latest # The type of machine to run the job on
+    environment: production # The environment in which to run the job
+    if: ${{ needs.terraform-plan.result == 'failure' }} # This job runs only if the terraform-plan job fails
+
+    # Define the steps of the job
+    steps:
+      - name: Discard Run # Discard the Terraform plan run
+        uses: hashicorp/tfc-workflows-github/actions/discard-run@v1.0.0
+        with:
+          token: ${{ secrets.TF_API_TOKEN }} # Fetch the Terraform API token from secrets
+          workspace: ${{ env.TF_WORKSPACE }} # Use the Terraform workspace defined as an environment variable
+          run: ${{ fromJSON(needs.terraform-plan.outputs.payload).data.id }} # Discard the run using its ID fetched from the output of the terraform-plan job
+
+
