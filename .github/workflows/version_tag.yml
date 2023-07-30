@@ -1,0 +1,51 @@
+name: Create Tag for Version Change
+
+on: 
+  push:
+    paths:
+      - 'VERSION'
+
+jobs:
+  build:
+    name: Create Tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(cat VERSION)
+        
+      - name: Create Tag
+        id: create_tag
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const version = "${{ steps.get_version.outputs.VERSION }}"
+            const ref = `refs/tags/v${version}`
+            const repository = context.repo.owner + "/" + context.repo.repo
+            const sha = context.sha
+
+            const tagExists = await github.git.getRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `tags/v${version}`
+            }).then( 
+              () => true, 
+              () => false
+            )
+
+            if (!tagExists) {
+              await github.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: ref,
+                sha: sha,
+              })
+
+              console.log("Tag created: " + ref)
+            } else {
+              console.log("Tag already exists: " + ref)
+            }
