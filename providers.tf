@@ -1,3 +1,10 @@
-provider "google" {
-  credentials = var.gcp_credentials
+terraform {
+    required_providers {
+        google = {
+            source = "hashicorp/google"
+        }
+        google-beta = {
+            source = "hashicorp/google-beta"
+        }        
+    }
 }
