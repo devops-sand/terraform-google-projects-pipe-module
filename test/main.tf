@@ -44,3 +44,6 @@ variable "billing_account" {
   description = "Billing account declared in TFE"
 }
 
+provider "google" {
+  credentials = var.gcp_credentials
+}
