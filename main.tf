@@ -18,11 +18,3 @@ resource "random_string" "rand" {
   numeric = true
   special = false
 }
-
-resource "random_string" "dummy" {
-  length  = 3
-  upper   = false
-  lower   = true
-  numeric = true
-  special = false
-}
