@@ -1,12 +1,11 @@
 run "validate_env_variable" {
   variables {
-    env             = "invalid" # Intentionally invalid value to test the validation
-    gcp_credentials = var.gcp_credentials
-    folder_stg      = var.folder_stg
-    folder_prd      = var.folder_prd
-    folder_dev      = var.folder_dev
-    project_name    = var.project_name
-    billing_account = var.billing_account
+    env              = "d"
+    gcp_credentials  = "dummy_credentials"
+    folder_dev       = "dummy_folder_dev"
+    folder_stg       = "dummy_folder_stg"
+    folder_prd       = "dummy_folder_prd"
+    billing_account  = "dummy_billing_account"
   }
 
   assert {
