@@ -1,5 +1,5 @@
 run "tests" {
     module {
-        source = "../test"
+        source = "../"
     }
 }
