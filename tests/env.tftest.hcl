@@ -14,6 +14,11 @@ run "create_google_project" {
   }
 
   assert {
+    condition     = contains(["d", "s", "p"], var.env)
+    error_message = "Provided 'env' value does not meet the expected criteria."
+  }
+
+  assert {
     condition     = google_project.project.project_id == "aether-d-test-project-random"
     error_message = "Project ID does not match expected format."
   }
