@@ -1,3 +1,9 @@
+run "tests" {
+    module {
+        source = "../"
+    }
+}
+
 run "env" {
   command = apply
 
