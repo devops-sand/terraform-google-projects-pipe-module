@@ -42,6 +42,28 @@ jobs:
       - name: Terraform Init # Run Terraform initialization
         run: terraform init
 
+  # The fourth job is to run Terraform tests
+  terraform-test:
+    name: "Terraform Test" # Name of the job
+    runs-on: ubuntu-latest # The type of machine to run the job on
+    environment: production # The environment in which to run the job
+
+    # Define the steps of the job
+    steps:
+      - name: Checkout # Checkout the repository
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform # Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }} # Fetch the Terraform API token from secrets
+
+      - name: Run Terraform Test # Run Terraform test
+        run: |
+          terraform init # Initialize Terraform in the test directory
+          terraform test # Run Terraform tests
+
+
   # The second job is to plan the Terraform deployment
   terraform-plan:
     name: "Terraform Plan" # Name of the job
@@ -107,5 +129,6 @@ jobs:
           token: ${{ secrets.TF_API_TOKEN }} # Fetch the Terraform API token from secrets
           workspace: ${{ env.TF_WORKSPACE }} # Use the Terraform workspace defined as an environment variable
           run: ${{ fromJSON(needs.terraform-plan.outputs.payload).data.id }} # Discard the run using its ID fetched from the output of the terraform-plan job
+
 
 
