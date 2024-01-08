@@ -3,6 +3,12 @@ run "env" {
 
   variables {
     env = "${run.tests.env}"
+    gcp_credentials = "${run.tests.gcp_credentials}"
+    project_name = "${run.tests.project_name}"
+    billing_account = "${run.tests.billing_account}"
+    folder_dev = "${run.tests.folder_dev}"
+    folder_stg = "${run.tests.folder_stg}"
+    folder_prd = "${run.tests.folder_prd}"
   }
 
   assert {
