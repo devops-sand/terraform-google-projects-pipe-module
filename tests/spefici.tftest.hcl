@@ -1,8 +1,8 @@
-run "create_bucket" {
+run "env" {
   command = apply
 
   variables {
-    env = "d"
+    env = "${run.tests.env}"
   }
 
   assert {
